@@ -1,0 +1,958 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": ".lighthouserc",
+  "version": "12.2.0",
+  "description": "Lighthouse CI configuration JSON schema. Reference: https://github.com/GoogleChrome/lighthouse-ci/blob/main/docs/configuration.md",
+  "type": "object",
+  "$defs": {
+    "output": {
+      "enum": ["json", "html", "csv"]
+    },
+    "chromeFlag": {
+      "type": ["string", "array"],
+      "$ref": "./chrome-flags.schema.json",
+      "additionalItems": {
+        "type": "string"
+      }
+    },
+    "port": {
+      "type": "number",
+      "description": "The port to use for the debugging protocol. Use 0 for a random port.",
+      "multipleOf": 1,
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "assertionFailureLevel": {
+      "enum": ["warn", "error", "off"]
+    },
+    "assertion": {
+      "type": "object",
+      "properties": {
+        "aggregationMethod": {
+          "$ref": "#/$defs/aggregationMethod"
+        },
+        "minScore": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1
+        },
+        "maxLength": {
+          "type": "number",
+          "default": 4096
+        },
+        "maxNumericValue": {
+          "type": "number"
+        }
+      }
+    },
+    "timingMetric": {
+      "description": "The type of timing metric.",
+      "type": "string",
+      "enum": [
+        "first-contentful-paint",
+        "largest-contentful-paint",
+        "first-cpu-idle",
+        "interactive",
+        "first-meaningful-paint",
+        "speed-index",
+        "total-blocking-time",
+        "cumulative-layout-shift",
+        "max-potential-fid"
+      ]
+    },
+    "aggregationMethod": {
+      "enum": ["median", "optimistic", "pessimistic", "median-run"]
+    },
+    "assertions": {
+      "type": "object",
+      "description": "The result of any audit in Lighthouse can be asserted. Assertions are keyed by the Lighthouse audit ID and follow an eslint-style format of level, [level, options]. For a reference of the audit IDs in each category, you can take a look at the default Lighthouse config. When no options are set, the default options of {\"aggregationMethod\": \"optimistic\", \"minScore\": 1} are used.",
+      "propertyNames": {
+        "$ref": "#/$defs/timingMetric"
+      },
+      "patternProperties": {
+        ".*": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/assertionFailureLevel"
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "$ref": "#/$defs/assertionFailureLevel"
+                },
+                {
+                  "$ref": "#/$defs/assertion"
+                }
+              ],
+              "items": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "timingBudget": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "$ref": "#/$defs/timingMetric"
+        },
+        "budget": {
+          "type": "number",
+          "description": "Budget for timing measurement, in milliseconds."
+        }
+      },
+      "additionalProperties": false,
+      "required": ["metric", "budget"]
+    },
+    "resourceBudget": {
+      "type": "object",
+      "properties": {
+        "resourceType": {
+          "description": "The resource type that a budget applies to.",
+          "enum": [
+            "stylesheet",
+            "image",
+            "media",
+            "font",
+            "script",
+            "document",
+            "other",
+            "total",
+            "third-party"
+          ]
+        },
+        "budget": {
+          "description": "Budget for resource. Depending on context, this is either the count or size (KiB) of a resource.",
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["resourceType", "budget"]
+    },
+    "budget": {
+      "description": "Budget for resource. Depending on context, this is either the count or size (KiB) of a resource.",
+      "deprecated": true,
+      "type": "object",
+      "properties": {
+        "options": {
+          "description": "Budget options",
+          "properties": {
+            "firstPartyHostnames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "path": {
+          "type": "string",
+          "description": "Indicates which pages a budget applies to. Uses the robots.txt format.\nIf it is not supplied, the budget applies to all pages.\nMore info on robots.txt: https://developers.google.com/search/reference/robots_txt#url-matching-based-on-path-values"
+        },
+        "resourceCounts": {
+          "type": "array",
+          "description": "Budgets based on resource count.",
+          "items": {
+            "$ref": "#/$defs/resourceBudget"
+          }
+        },
+        "resourceSizes": {
+          "type": "array",
+          "description": "Budgets based on resource size.",
+          "items": {
+            "$ref": "#/$defs/resourceBudget"
+          }
+        },
+        "timings": {
+          "type": "array",
+          "description": "Budgets based on timing metrics.",
+          "items": {
+            "$ref": "#/$defs/timingBudget"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "ci": {
+      "type": "object",
+      "properties": {
+        "collect": {
+          "type": "object",
+          "properties": {
+            "method": {
+              "enum": ["node", "psi"],
+              "default": "node",
+              "description": "The method used to run Lighthouse. There are currently two options available, \"node\" which runs Lighthouse locally via node, and \"psi\" which runs Lighthouse by making a request to the PageSpeed Insights API.\n\nThe PageSpeed Insights method has the major limitation that only sites publicly available over the internet can be tested and no other collection options will be respected."
+            },
+            "headful": {
+              "type": "boolean",
+              "default": false,
+              "description": "Run with a headful Chrome."
+            },
+            "additive": {
+              "type": "boolean",
+              "default": false,
+              "description": "Skips clearing of previous collect data."
+            },
+            "url": {
+              "description": "An array of the URLs that you'd like Lighthouse CI to collect results from.\n\nWhen used with staticDistDir:\n\nAutomatic detection of URLs based on HTML files on disk will be disabled.\nURLs will have their port replaced with the port of the local server that Lighthouse CI starts for you. This allows you to write URLs as http://localhost/my-static-page.html without worrying about the chosen temporary port.\nWhen used without staticDistDir:\n\nURLs will be used as-is without modification.",
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "autodiscoverUrlBlocklist": {
+              "description": "An array of the URLs that you'd like Lighthouse CI to collect results from.\n\nWhen used with staticDistDir:\n\nAutomatic detection of URLs based on HTML files on disk will be disabled.\nURLs will have their port replaced with the port of the local server that Lighthouse CI starts for you. This allows you to write URLs as http://localhost/my-static-page.html without worrying about the chosen temporary port.\nWhen used without staticDistDir:\n\nURLs will be used as-is without modification.",
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "staticDistDir": {
+              "type": "string",
+              "description": "The path to the directory where the project's productionized static assets are kept. Lighthouse CI uses this to spin up a static server on your behalf that will be used to load your site.\n\nUse this option when the project is a static website to be hosted locally that does not require a separate server. DO NOT use this option if url will point to an origin that isn't localhost or the project uses startServerCommand to start a separate server."
+            },
+            "isSinglePageApplication": {
+              "type": "boolean",
+              "default": false,
+              "description": "Boolean that controls whether the static server started in staticDistDir should act like a single-page application that serves index.html instead of a 404 for unrecognized paths. This flag has no function when staticDistDir is not set."
+            },
+            "chromePath": {
+              "type": "string",
+              "description": "The path of the Chrome executable to use for puppeteerScript and running Lighthouse. Lighthouse CI will use Chrome installations in the following priority order:\n\nchromePath option\nCHROME_PATH Environment Variable\nExecutable path returned by puppeteer or puppeteer-core, if installed.\nHighest priority installation returned by the chrome-launcher npm package."
+            },
+            "puppeteerScript": {
+              "type": "string",
+              "description": "An optional path to a JavaScript file that exports a function that uses puppeteer to login to your page, setup cache data, or otherwise manipulate the browser before Lighthouse is run."
+            },
+            "puppeteerLaunchOptions": {
+              "type": "object",
+              "description": "An object of options to pass to puppeteer's launch method. Only used when puppeterScript is set."
+            },
+            "psiApiKey": {
+              "type": "string",
+              "description": "The API key to use for making PageSpeed Insights requests. Required if using method=psi. You can obtain a PSI API key from Google APIs."
+            },
+            "psiApiEndpoint": {
+              "type": "string",
+              "description": "The API endpoint to hit for making a PageSpeed Insights request. It is very unlikely you should need to use this option. Only use this if you have self-hosted a custom version of the PSI API."
+            },
+            "psiStrategy": {
+              "enum": ["mobile", "desktop"],
+              "default": "mobile",
+              "description": "Use this option to change the strategy to use for PageSpeed Insights runner method. Use mobile or desktop. The default value is mobile."
+            },
+            "startServerCommand": {
+              "type": "string",
+              "description": "The shell command to use to start the project's webserver. LHCI will use this command to start the server before loading the urls and automatically shut it down once collection is complete.\n\nUse this option when your project requires a special webserver. DO NOT use this option when your project is just a collection of static assets. Use staticDistDir instead to use the built-in static server."
+            },
+            "startServerReadyPattern": {
+              "type": "string",
+              "description": "The regex pattern to look for in the server command's output before considering the server ready for requests. Only used when startServerCommand is set.\n\nFor example, when using the default listen, ready, Lighthouse would start collecting results once the the startServerCommand process printed Listening on port 1337 to stdout."
+            },
+            "startServerReadyTimeout": {
+              "type": "number",
+              "description": "The maximum amount of time in milliseconds to wait for startServerCommand to print the startServerReadyPattern before continuing anyway. Only used when startServerCommand is set."
+            },
+            "settings": {
+              "type": "object",
+              "description": "The Lighthouse CLI flags to pass along to Lighthouse. This can be used to change configuration of Lighthouse itself. See Lighthouse documentation on custom configs for more.",
+              "properties": {
+                "locale": {
+                  "enum": [
+                    "en-US",
+                    "en",
+                    "en-AU",
+                    "en-GB",
+                    "en-IE",
+                    "en-SG",
+                    "en-ZA",
+                    "en-IN",
+                    "ar-XB",
+                    "ar",
+                    "bg",
+                    "ca",
+                    "cs",
+                    "da",
+                    "de",
+                    "el",
+                    "en-XA",
+                    "en-XL",
+                    "es",
+                    "es-419",
+                    "es-AR",
+                    "es-BO",
+                    "es-BR",
+                    "es-BZ",
+                    "es-CL",
+                    "es-CO",
+                    "es-CR",
+                    "es-CU",
+                    "es-DO",
+                    "es-EC",
+                    "es-GT",
+                    "es-HN",
+                    "es-MX",
+                    "es-NI",
+                    "es-PA",
+                    "es-PE",
+                    "es-PR",
+                    "es-PY",
+                    "es-SV",
+                    "es-US",
+                    "es-UY",
+                    "es-VE",
+                    "fi",
+                    "fil",
+                    "fr",
+                    "he",
+                    "hi",
+                    "hr",
+                    "hu",
+                    "gsw",
+                    "id",
+                    "in",
+                    "it",
+                    "iw",
+                    "ja",
+                    "ko",
+                    "lt",
+                    "lv",
+                    "mo",
+                    "nl",
+                    "nb",
+                    "no",
+                    "pl",
+                    "pt",
+                    "pt-PT",
+                    "ro",
+                    "ru",
+                    "sk",
+                    "sl",
+                    "sr",
+                    "sr-Latn",
+                    "sv",
+                    "ta",
+                    "te",
+                    "th",
+                    "tl",
+                    "tr",
+                    "uk",
+                    "vi",
+                    "zh",
+                    "zh-HK",
+                    "zh-TW"
+                  ],
+                  "description": "The locale/language the report should be formatted in."
+                },
+                "maxWaitForFcp": {
+                  "type": "number"
+                },
+                "maxWaitForLoad": {
+                  "type": "number"
+                },
+                "blockedUrlPatterns": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "description": "Block any network requests to the specified URL patterns."
+                },
+                "additionalTraceCategories": {
+                  "type": "string",
+                  "description": "Comma-delimited list of trace categories to include."
+                },
+                "disableStorageReset": {
+                  "type": "boolean",
+                  "description": "Flag indicating that the browser storage should not be reset for the audit."
+                },
+                "clearStorageTypes": {
+                  "description": "Flag indicating which kinds of browser storage should be reset for the audit.\nCookies are not cleared by default, so the user isn't logged out.\nindexeddb, websql, and localstorage are not cleared by default to prevent loss of potentially important data.\nhttps://chromedevtools.github.io/debugger-protocol-viewer/tot/Storage/#type-StorageType"
+                },
+                "debugNavigation": {
+                  "type": "boolean",
+                  "description": "Flag indicating that Lighthouse should pause after page load to wait for the user's permission to continue the audit."
+                },
+                "skipAboutBlank": {
+                  "type": "boolean",
+                  "description": "If set to true, will skip the initial navigation to `about:blank`."
+                },
+                "usePassiveGathering": {
+                  "type": "boolean",
+                  "description": "If set to true, gatherers should avoid any behavior that may be destructive to the page state. (e.g. extra navigations, resizing the viewport)"
+                },
+                "formFactor": {
+                  "enum": ["mobile", "desktop"],
+                  "description": "How Lighthouse should interpret this run in regards to scoring performance metrics and skipping mobile-only tests in desktop. Must be set even if throttling/emulation is being applied outside of Lighthouse."
+                },
+                "screenEmulation": {
+                  "description": "Screen emulation properties (width, height, dpr, mobile viewport) to apply or an object of `{disabled: true}` if Lighthouse should avoid applying screen emulation. If either emulation is applied outside of Lighthouse, or it's being run on a mobile device, it typically should be set to disabled. For desktop, we recommend applying consistent desktop screen emulation.",
+                  "properties": {
+                    "width": {
+                      "type": "number",
+                      "description": "Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override."
+                    },
+                    "height": {
+                      "type": "number",
+                      "description": "Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override."
+                    },
+                    "deviceScaleFactor": {
+                      "type": "number",
+                      "description": "Overriding device scale factor value. 0 disables the override."
+                    },
+                    "mobile": {
+                      "type": "boolean",
+                      "description": "Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more."
+                    },
+                    "disabled": {
+                      "type": "boolean",
+                      "description": "Whether screen emulation is disabled. If `true`, the other emulation settings are ignored."
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "emulatedUserAgent": {
+                  "type": ["string", "boolean"],
+                  "description": "User Agent string to apply, `false` to not change the host's UA string, or `true` to use Lighthouse's default UA string."
+                },
+                "throttlingMethod": {
+                  "enum": ["devtools", "simulate", "provided"],
+                  "description": "The method used to throttle the network."
+                },
+                "throttling": {
+                  "type": "object",
+                  "description": "The throttling config settings.",
+                  "properties": {
+                    "rttMs": {
+                      "type": "number",
+                      "description": "Controls simulated network RTT (TCP layer) in milliseconds."
+                    },
+                    "throughputKbps": {
+                      "type": "number",
+                      "description": "Controls simulated network download throughput in kilobits per second."
+                    },
+                    "requestLatencyMs": {
+                      "type": "number",
+                      "description": "Controls emulated network RTT (HTTP layer) in milliseconds."
+                    },
+                    "downloadThroughputKbps": {
+                      "type": "number",
+                      "description": "Controls emulated network download throughput in kilobits per second."
+                    },
+                    "uploadThroughputKbps": {
+                      "type": "number",
+                      "description": "Controls emulated network upload throughput in kilobits per second."
+                    },
+                    "cpuSlowdownMultiplier": {
+                      "type": "number",
+                      "description": "Controls simulated + emulated CPU throttling in kilobits per second."
+                    }
+                  }
+                },
+                "onlyAudits": {
+                  "type": "array",
+                  "description": "If present, the run should only conduct this list of audits.",
+                  "items": {
+                    "$ref": "#/$defs/timingMetric",
+                    "default": []
+                  }
+                },
+                "pauseAfterFcpMs": {
+                  "type": "number",
+                  "description": "The number of milliseconds to wait after FCP until the page should be considered loaded.",
+                  "default": 0
+                },
+                "pauseAfterLoadMs": {
+                  "type": "number",
+                  "description": "The number of milliseconds to wait after the load event until the page should be considered loaded.",
+                  "default": 0
+                },
+                "networkQuietThresholdMs": {
+                  "type": "number",
+                  "description": "The number of milliseconds to wait between high priority network requests or 3 simultaneous requests before the page should be considered loaded.",
+                  "default": 5000
+                },
+                "cpuQuietThresholdMs": {
+                  "type": "number",
+                  "description": "The number of milliseconds to wait between long tasks until the page should be considered loaded.",
+                  "default": 0
+                },
+                "blankPage": {
+                  "type": "string",
+                  "description": "The URL to use for the \"blank\" neutral page in between navigations. Defaults to `about:blank`.",
+                  "default": "about:blank"
+                },
+                "onlyCategories": {
+                  "type": "array",
+                  "description": "If present, the run should only conduct this list of categories.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skipAudits": {
+                  "type": "object",
+                  "description": " List of extra HTTP Headers to include.",
+                  "additionalProperties": { "type": "string" }
+                },
+                "extraHeaders": {
+                  "type": "object",
+                  "description": "Set extra HTTP Headers to pass with request.",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": true
+                },
+                "precomputedLanternData": {
+                  "type": "object",
+                  "description": "Path to the file where lantern simulation data should be read from, overwriting the lantern observed estimates for RTT and server latency.",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "properties": {
+                    "additionalRttByOrigin": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "serverResponseTimeByOrigin": {
+                      "type": "object",
+                      "maxProperties": 1,
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "lanternDataOutputPath": {
+                  "type": "object",
+                  "description": "Path to the file where lantern simulation data should be written to, can be used in a future run with the `precomputed-lantern-data-path` flag."
+                },
+                "plugins": {
+                  "type": "array",
+                  "description": "Run the specified plugins.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "configPath": {
+                  "type": "string",
+                  "description": "The path to the config JSON."
+                },
+                "logLevel": {
+                  "enum": ["silent", "error", "warn", "info", "verbose"],
+                  "description": "The level of logging to enable."
+                },
+                "hostname": {
+                  "type": "string",
+                  "description": "The hostname to use for the debugging protocol, if manually connecting."
+                },
+                "port": {
+                  "$ref": "#/$defs/port"
+                },
+                "budgets": {
+                  "type": "array",
+                  "deprecated": true,
+                  "description": "A list of budgets.\n\n**Removed as of Lighthouse v12.0.0 (2024-04-22)**.\n See: https://github.com/GoogleChrome/lighthouse/blob/c79628af9bdaa537a2abd1b34da922e28b81bd98/changelog.md#-breaking-changes",
+                  "items": {
+                    "$ref": "#/$defs/budget"
+                  }
+                },
+                "budgetPath": {
+                  "type": "string",
+                  "description": "Path to the budget.json file for LightWallet.\n\n**Removed as of Lighthouse v12.0.0 (2024-04-22)**.\n See: https://github.com/GoogleChrome/lighthouse/blob/c79628af9bdaa537a2abd1b34da922e28b81bd98/changelog.md#-breaking-changes",
+                  "deprecated": true
+                },
+                "auditMode": {
+                  "type": ["boolean", "string"],
+                  "description": "Flag indicating the run should only audit."
+                },
+                "gatherMode": {
+                  "type": ["boolean", "string"],
+                  "description": "Flag indicating the run should only gather."
+                },
+                "disableFullPageScreenshot": {
+                  "type": "boolean",
+                  "description": "Disables collection of the full page screenshot, which can be rather large and possibly leave the page in an undesirable state."
+                },
+                "ignoreStatusCode": {
+                  "type": "boolean",
+                  "description": "Disables failing on 404 status code, and instead issues a warning."
+                },
+                "output": {
+                  "description": "Reporter for the results, supports multiple values. choices: \"json\", \"html\", \"csv\"",
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "$ref": "#/$defs/output"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/output"
+                      }
+                    }
+                  ]
+                },
+                "outputPath": {
+                  "type": "string",
+                  "description": "Output path for the generated results."
+                },
+                "channel": {
+                  "type": "string",
+                  "description": "How Lighthouse was run, e.g. from the Chrome extension or from the npm module.",
+                  "default": "cli"
+                },
+                "chromeFlags": {
+                  "description": "Custom flags to pass to Chrome (space-delimited). For a full list of flags, see https://bit.ly/chrome-flags",
+                  "$ref": "#/$defs/chromeFlag"
+                },
+                "chromeIgnoreDefaultFlags": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "listAllAudits": {
+                  "type": "boolean",
+                  "description": "Flag to print a list of all audits + categories.",
+                  "default": false
+                },
+                "listAllCategories": { "deprecated": true },
+                "printConfig": { "deprecated": true }
+              }
+            },
+            "numberOfRuns": {
+              "type": "number",
+              "description": "\n\nLighthouse CI Flag\n\nThe number of reports to collect.",
+              "default": 3,
+              "multipleOf": 1,
+              "minimum": 1
+            }
+          },
+          "dependentRequired": {
+            "puppeteerLaunchOptions": ["puppeteerScript"],
+            "startServerReadyPattern": ["startServerCommand"],
+            "startServerReadyTimeout": ["startServerCommand"]
+          }
+        },
+        "assert": {
+          "type": "object",
+          "description": "Lighthouse CI assertion configuration.",
+          "properties": {
+            "preset": {
+              "oneOf": [
+                {
+                  "description": "There are three presets available to provide a good starting point. Presets can be extended with manual assertions.\n\nlighthouse:all - Asserts that every audit received a perfect score. This is extremely difficult to do. Only use as a base on very high quality, greenfield projects and lower the thresholds as needed.\nlighthouse:recommended - Asserts that every audit outside performance received a perfect score, that no resources were flagged for performance opportunities, and warns when metric values drop below a score of 90. This is a more realistic base that disables hard failures for flaky audits.\nlighthouse:no-pwa - lighthouse:recommended but without any of the PWA audits enabled.",
+                  "enum": ["lighthouse:all", "lighthouse:recommended", "lighthouse:no-pwa"],
+                  "deprecated": true
+                },
+                {
+                  "description": "A preset audit of selected audit categories to run.",
+                  "enum": ["experimental", "perf", "desktop"]
+                }
+              ]
+            },
+            "assertions": {
+              "$ref": "#/$defs/assertions"
+            },
+            "assertMatrix": {
+              "type": "array",
+              "description": "assertMatrix can be used to assert against multiple URLs at the same time. When checking the results of runs against multiple URLs, different assertions can be made for different URL patterns.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "preset": {
+                    "enum": ["lighthouse:all", "lighthouse:recommended"]
+                  },
+                  "aggregationMethod": {
+                    "$ref": "#/$defs/aggregationMethod"
+                  },
+                  "matchingUrlPattern": {
+                    "type": "string"
+                  },
+                  "assertions": {
+                    "$ref": "#/$defs/assertions"
+                  }
+                },
+                "required": ["matchingUrlPattern", "assertions"]
+              }
+            },
+            "budgetsFile": {
+              "type": "string",
+              "description": "Instead of configuring using Lighthouse CI assertions against Lighthouse audits, a budget.json file can be used instead. This option cannot be used in conjunction with any other assert option.\n\n**Removed as of Lighthouse v12.0.0 (2024-04-22)**.\n See: https://github.com/GoogleChrome/lighthouse/blob/c79628af9bdaa537a2abd1b34da922e28b81bd98/changelog.md#-breaking-changes"
+            },
+            "includePassedAssertions": {
+              "type": "boolean",
+              "default": false,
+              "description": "Boolean that controls whether passed assertions should be included in the output. Only assertions that didn't pass are shown normally."
+            }
+          }
+        },
+        "upload": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "enum": ["lhci", "temporary-public-storage", "filesystem"],
+              "default": "temporary-public-storage",
+              "description": "The target location to which Lighthouse CI should upload the reports.\n\ndefault: lhci"
+            },
+            "token": {
+              "type": "string",
+              "description": "The build token for your Lighthouse CI project. Required when using target=lhci. This token should be given to you by lhci wizard --wizard=new-project. If you've forgotten your token, connect directly to your server and run lhci wizard --wizard=reset-build-token.\n\n"
+            },
+            "ignoreDuplicateBuildFailure": {
+              "type": "boolean",
+              "default": false,
+              "description": "Boolean that controls whether upload failures due to duplicate build hashes should be ignored. The build token only allows the creation of data on the server and not the editing or destruction of data on the LHCI server. When the CLI attempts to upload a Lighthouse report for a hash that already exists, the server will reject it.\n\nUse this option when you don't run Lighthouse CI as the last step of your CI process or reruns are common."
+            },
+            "githubToken": {
+              "type": "string",
+              "description": "The GitHub token to use when setting a status check on a GitHub PR. Use this when the project is hosted on GitHub and not using the official GitHub App."
+            },
+            "githubApiHost": {
+              "type": "string",
+              "description": "The GitHub API host to use when attempting to set a status check. Use this when the project is hosted on a private GitHub enterprise server and not using the public GitHub API."
+            },
+            "githubAppToken": {
+              "type": "string",
+              "description": "The GitHub App token returned when installing the GitHub App. Use this to set status checks on GitHub PRs when using the official GitHub App."
+            },
+            "githubStatusContextSuffix": {
+              "type": "string",
+              "description": "The suffix to use when setting the status check on a GitHub PR.\n\nFor example, by default lhci is used as the root of the status check label, but this can be configured to lhci-app by setting githubStatusContextSuffix to -app."
+            },
+            "extraHeaders": {
+              "type": "object",
+              "description": "A map of additional headers to add the requests made to the LHCI server. Useful for adding bespoke auth tokens.",
+              "properties": {
+                "Authorization": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "basicAuth": {
+              "type": "object",
+              "description": "An object containing a username and password pair for authenticating with a Basic auth protected LHCI server. Use this setting when you've protected your LHCI server with Basic auth.",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              },
+              "required": ["username", "password"],
+              "additionalProperties": false
+            },
+            "serverBaseUrl": {
+              "type": "string",
+              "description": "The base URL of the LHCI server to upload to. Required when using target=lhci."
+            },
+            "uploadUrlMap": {
+              "type": "boolean",
+              "default": false,
+              "description": "Boolean that controls whether to update the latest build in temporary public storage associated with this repo. If you use master as your default branch, DO NOT use this option. If you don't use master as your default branch, set this option when you upload results from your actual default branch."
+            },
+            "urlReplacementPatterns": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^s(.)(.*)\\1(.*)\\1([gim]*)$"
+              }
+            },
+            "outputDir": {
+              "type": "string",
+              "description": "The directory relative to the current working directory in which to output a manifest.json along with the Lighthouse reports collected. Any existing manifest.json in that directory will be overwritten."
+            },
+            "reportFilenamePattern": {
+              "type": "string",
+              "description": "The pattern to use for report filenames when writing the reports to the filesystem. Basic string interpolation is supported replacing %%HOSTNAME%% with the URL's hostname, %%PATHNAME%% with the page path, %%DATETIME%% with the ISO string of the UTC report generated timestamp, %%DATE%% with the ISO-style string of the UTC report generated date, %%EXTENSION%% with the extension of the file.\n\nIn the case of filename collisions between runs, the last written report wins and all others will be overwritten. Median reports are written to disk last."
+            }
+          },
+          "dependentRequired": {
+            "lhci": ["token"]
+          }
+        },
+        "server": {
+          "type": "object",
+          "properties": {
+            "port": {
+              "$ref": "#/$defs/port"
+            },
+            "host": {
+              "type": "string",
+              "description": "The host to bind the server to. The default is to use the unspecified IPv6 address (::) when IPv6 is available, or the unspecified IPv4 address (0.0.0.0) otherwise. To only accept connections on IPv4 use 0.0.0.0 as host."
+            },
+            "storage": {
+              "type": "object",
+              "properties": {
+                "sqlDialect": {
+                  "enum": ["mysql", "postgres", "sqlite"],
+                  "description": "One of mysql, postgres, or sqlite. sqlite in a local file on disk has been sufficient for most use cases."
+                },
+                "sqlDatabasePath": {
+                  "type": "string",
+                  "description": "The path to the sqlite database on the local filesystem relative to the current working directory."
+                },
+                "sqlConnectionUrl": {
+                  "type": "string",
+                  "description": "The database connection URL string for the MySQL or PostgreSQL database of the form <dialect>://<user>:<password>@<host>:<port>/<database>."
+                },
+                "sqlDangerouslyResetDatabase": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "WARNING: this option will delete all data in the database\n\nBoolean flag useful during setup if things have gone wrong. This flag will reset the schema of all LHCI tables to factory fresh, deleting all data in the process."
+                },
+                "sequelizeOptions": {
+                  "description": "Additional raw options object to pass to sequelize. Refer to the sequelize documentation for more information on available settings."
+                },
+                "sqlMigrationOptions": {
+                  "type": "object",
+                  "properties": {
+                    "tableName": {
+                      "type": "string",
+                      "default": "SequelizeMeta",
+                      "description": "Use a different Sequelize table name. Default: SequelizeMeta. Refer to the sequelize migrations documentation for more information."
+                    }
+                  }
+                }
+              },
+              "description": "Options that control how the historical Lighthouse data is stored. Currently only SQL-based storage mechanisms are supported."
+            },
+            "psiCollectCron": {
+              "type": "object",
+              "properties": {
+                "psiApiKey": {
+                  "type": "string",
+                  "description": "The API key to use with the PSI API. You can obtain a PSI API Key by following the official documentation."
+                },
+                "sites": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "urls": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The array of sites to collect results for. This configuration will only be possible once the server has been setup and project have been created."
+                      },
+                      "schedule": {
+                        "type": "string",
+                        "description": "The cron-style schedule on which to collect results."
+                      },
+                      "projectSlug": {
+                        "type": "string",
+                        "description": "The unique slug identifer of the project in which results should be saved. The easiest way to tell the project slug is to open the project on the server and look at the URL bar."
+                      },
+                      "numberOfRuns": {
+                        "type": "number",
+                        "default": 5,
+                        "minimum": 1,
+                        "multipleOf": 1,
+                        "description": "The number of reports to collect for each URL on each iteration of the schedule. Defaults to 5."
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "The human friendly label for this set of URLs to use when logging status to stdout/stderr. Not used for anything other than logging."
+                      },
+                      "branch": {
+                        "type": "string",
+                        "description": "The \"branch\" on which to report the results. Defaults to the base branch of the project referenced by projectSlug."
+                      }
+                    },
+                    "required": ["urls", "schedule", "projectSlug"]
+                  },
+                  "description": "The array of sites to collect results for. This configuration will only be possible once the server has been setup and project have been created."
+                }
+              },
+              "description": "The configuration to automatically collect results using the PageSpeed Insights API."
+            },
+            "deleteOldBuildsCron": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "schedule": {
+                    "type": "string",
+                    "description": "The cron-style schedule on which to collect results."
+                  },
+                  "maxAgeInDays": {
+                    "type": "number",
+                    "multipleOf": 1,
+                    "minimum": 0,
+                    "description": "A number of days to keep a records."
+                  },
+                  "onlyBranches": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of branch names, which should be deleted"
+                  },
+                  "skipBranches": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of branch names, which should be excluded during cleanup"
+                  }
+                }
+              },
+              "description": "The configuration to automatically delete old records. This job only works when storage.storageMethod is set sql. Might be an array of objects, or just a single object."
+            }
+          }
+        },
+        "wizard": {
+          "type": "object",
+          "properties": {
+            "extraHeaders": {
+              "type": "string",
+              "description": "If you're running the lhci server behind a reverse proxy or any other component that requires some extra headers you can configure them in the wizard section extraHeaders."
+            },
+            "serverBaseUrl": {
+              "type": "string",
+              "description": "If you're running the lhci wizard multiple times, you can configure a default serverBaseUrl to avoid typing it in at each lhci wizard run."
+            }
+          }
+        }
+      }
+    }
+  }
+}
