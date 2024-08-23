@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chrome Flags",
+  "description": "Chrome Flags JSON schema.\nThis schema is derived from: https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md",
+  "type": "array",
+  "items": {
+    "anyOf": [
+      {
+        "title": "Allow invalid certificates for resources loaded from localhost",
+        "const": "--allow-insecure-localhost",
+        "description": "Allows requests to localhost over HTTPS even when an invalid certificate is presented"
+      },
+      {
+        "const": "--disable-setuid-sandbox",
+        "description": "Disable the setuid sandbox (Linux only)"
+      },
+      {
+        "const": "--ignore-certificate-errors-spki-list",
+        "description": "A set of public key hashes for which to ignore certificate-related errors. If the certificate chain presented by the server does not validate, and one or more certificates have public key hashes that match a key from this list, the error is ignored. The switch value must be a comma-separated list of Base64-encoded SHA-256 SPKI Fingerprints (RFC 7469, Section 2.4). This switch has no effect unless --user-data-dir (as defined by the content embedder) is also present."
+      },
+      {
+        "const": "--disable-client-side-phishing-detection",
+        "description": "Disables client-side phishing detection"
+      },
+      {
+        "const": "--disable-component-extensions-with-background-pages",
+        "description": "Disable some built-in extensions that aren't affected by `--disable-extensions`"
+      },
+      {
+        "const": "--disable-default-apps",
+        "description": "Disable installation of default apps"
+      },
+      { "const": "--disable-extensions", "description": "Disable all chrome extensions" },
+      {
+        "const": "--disable-features=InterestFeedContentSuggestions",
+        "description": "Disables the Discover feed on NTP"
+      },
+      {
+        "const": "--disable-features=Translate",
+        "description": "Disables Chrome translation, both the manual option and the popup prompt when a page with differing language is detected"
+      },
+      { "const": "--hide-scrollbars", "description": "Hide scrollbars from screenshots" },
+      { "const": "--mute-audio", "description": "Mute any audio" },
+      {
+        "const": "--no-default-browser-check",
+        "description": "Disable the default browser check, do not prompt to set it as such"
+      },
+      { "const": "--no-first-run", "description": "Skip first run wizards" },
+      {
+        "const": "--ash-no-nudges",
+        "description": "Avoids blue bubble \"user education\" nudges (eg., \"… give your browser a new look\", Memory Saver)"
+      },
+      {
+        "const": "--disable-search-engine-choice-screen",
+        "description": "Disable the 2023+ search engine choice screen"
+      },
+      {
+        "const": "--propagate-iph-for-testing",
+        "description": "Specifies which in-product help (IPH) features are allowed. If no arguments are provided, then all IPH features are disabled"
+      },
+      {
+        "const": "--disable-background-timer-throttling",
+        "description": "Disable timers being throttled in background pages/tabs"
+      },
+      {
+        "const": "--disable-backgrounding-occluded-windows",
+        "description": "Normally, Chrome will treat a 'foreground' tab instead as _backgrounded_ if the surrounding window is occluded (aka visually covered) by another window. This flag disables that"
+      },
+      {
+        "const": "--disable-features=CalculateNativeWinOcclusion",
+        "description": "Disable the feature of: Calculate window occlusion on Windows will be used in the future to throttle and potentially unload foreground tabs in occluded windows"
+      },
+      {
+        "const": "--disable-hang-monitor",
+        "description": "Suppresses hang monitor dialogs in renderer processes. This flag may allow slow unload handlers on a page to prevent the tab from closing"
+      },
+      {
+        "const": "--disable-ipc-flooding-protection",
+        "description": "Some javascript functions can be used to flood the browser process with IPC. By default, protection is on to limit the number of IPC sent to 10 per second per frame. This flag disables it. https://crrev.com/604305"
+      },
+      {
+        "const": "--disable-renderer-backgrounding",
+        "description": "This disables non-foreground tabs from getting a lower process priority This doesn't (on its own) affect timers or painting behavior. [karma-chrome-launcher#123](https://github.com/karma-runner/karma-chrome-launcher/issues/123)"
+      },
+      { "const": "--aggressive-cache-discard" },
+      { "const": "--allow-running-insecure-content" },
+      {
+        "const": "--disable-back-forward-cache",
+        "description": "Disables the BackForwardCache feature"
+      },
+      {
+        "const": "--disable-features=AcceptCHFrame",
+        "description": "Disable accepting h2/h3 [ACCEPT_CH](https://datatracker.ietf.org/doc/html/draft-davidben-http-client-hint-reliability-02#section-4.3) Client Hints frames"
+      },
+      {
+        "const": "--disable-features=AutoExpandDetailsElement",
+        "description": "Removed in [Sept 2022](https://bugs.chromium.org/p/chromium/issues/detail?id=1185950#c62)"
+      },
+      {
+        "const": "--disable-features=AvoidUnnecessaryBeforeUnloadCheckSync",
+        "description": "If enabled, this feature results in the browser process only asking the renderer process to run beforeunload handlers if it knows such handlers are registered. With `kAvoidUnnecessaryBeforeUnloadCheckSync`, content does not report a beforeunload handler is present. A ramification of this is navigations that would normally check beforeunload handlers before continuing will not, and navigation will synchronously continue"
+      },
+      { "const": "--disable-features=BackForwardCache", "description": "Disable the bfcache" },
+      {
+        "const": "--disable-features=HeavyAdPrivacyMitigations",
+        "description": "Disables the privacy mitigations for the heavy ad intervention. This throttles the amount of interventions that can occur on a given host in a time period. It also adds noise to the thresholds used. This is separate from the intervention feature so it does not interfere with field trial activation, as this blocklist is created for every user, and noise is decided prior to seeing a heavy ad"
+      },
+      { "const": "--disable-features=IsolateOrigins" },
+      { "const": "--disable-features=LazyFrameLoading" },
+      { "const": "--disable-features=ScriptStreaming", "description": "V8 script streamine" },
+      {
+        "const": "--no-process-per-site",
+        "description": "Disables renderer process reuse (across tabs of the same site)"
+      },
+      {
+        "const": "--enable-precise-memory-info",
+        "description": "Make the values returned to window.performance.memory more granular and more up to date in shared worker. Without this flag, the memory information is still available, but it is bucketized and updated less frequently. This flag also applys to workers"
+      },
+      {
+        "const": "--js-flags=--random-seed=1157259157",
+        "description": "Initialize V8's RNG with a fixed seed"
+      },
+      {
+        "const": "--use-fake-device-for-media-stream",
+        "description": "Use fake device for Media Stream to replace camera and microphone"
+      },
+      {
+        "const": "--use-fake-ui-for-media-stream",
+        "description": "Bypass the media stream infobar by selecting the default device for media streams (e.g. WebRTC). Works with --use-fake-device-for-media-stream"
+      },
+      {
+        "const": "--use-file-for-fake-video-capture=<path-to-file>",
+        "description": "Use file for fake video capture (.y4m or .mjpeg) Needs `--use-fake-device-for-media-stream"
+      },
+      {
+        "const": "--autoplay-policy=..",
+        "description": "Value of `user-gesture-required` to not autoplay video. Value of `no-user-gesture-required` to always autoplay video"
+      },
+      {
+        "const": "--deny-permission-prompts",
+        "description": "Suppress all permission prompts by automatically denying them"
+      },
+      {
+        "const": "--disable-external-intent-requests",
+        "description": "Disallow opening links in external application"
+      },
+      {
+        "const": "--disable-features=GlobalMediaControls",
+        "description": "Hide toolbar button that opens dialog for controlling media sessions"
+      },
+      {
+        "const": "--disable-features=ImprovedCookieControls",
+        "description": "Disables an improved UI for third-party cookie blocking in incognito mode"
+      },
+      {
+        "const": "--disable-features=PrivacySandboxSettings4",
+        "description": "Disables \"Enhanced ad privacy in Chrome\" dialog (if it wasn't disabled through other means)"
+      },
+      {
+        "const": "--disable-notifications",
+        "description": "Disables the Web Notification and the Push APIs"
+      },
+      {
+        "const": "--disable-popup-blocking",
+        "description": "Disable popup blocking.  `--block-new-web-contents` is the strict version of this"
+      },
+      {
+        "const": "--disable-prompt-on-repost",
+        "description": "Reloading a page that came from a POST normally prompts the user"
+      },
+      { "const": "--noerrdialogs`: Suppresses all error dialogs when present" },
+      {
+        "const": "--enable-automation",
+        "description": "Disable a few things considered not appropriate for automation\n- sets `window.navigator.webdriver` to `true` within all JS contexts. This is also set [when using](https://source.chromium.org/chromium/chromium/src/+/main:content/child/runtime_features.cc;l=374-376;drc=4a843634b8b3006e431add55968f6f45ee54d35e) `--headless`, `--remote-debugging-pipe` and `--remote-debugging-port=0` (yes, [_specifically_ 0](https://source.chromium.org/chromium/chromium/src/+/main:content/child/runtime_features.cc;l=412-427;drc=4a843634b8b3006e431add55968f6f45ee54d35e)). \n- disables bubble notification about running development/unpacked extensions ([source](https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/ui/extensions/extension_message_bubble_factory.cc;l=71-76;drc=1e6c1a39cbbc1dcad6e7828661d74d76463465ed)) \n- disables the password saving UI (which [covers](https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/password_manager/chrome_password_manager_client.cc;l=301-308;drc=1e6c1a39cbbc1dcad6e7828661d74d76463465ed) the usecase of the [defunct](https://bugs.chromium.org/p/chromedriver/issues/detail?id=1015) `--disable-save-password-bubble` flag) \n- disables infobar animations ([source](https://source.chromium.org/chromium/chromium/src/+/main:components/infobars/content/content_infobar_manager.cc;l=48-52;drc=1e6c1a39cbbc1dcad6e7828661d74d76463465ed)) \n- disables auto-reloading on network errors ([source](https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/chrome_content_browser_client.cc;l=1328-1331;drc=1e6c1a39cbbc1dcad6e7828661d74d76463465ed)) \n- enables the CDP method [`Browser.getBrowserCommandLine`](https://chromedevtools.github.io/devtools-protocol/tot/Browser/#method-getBrowserCommandLine). \n- avoids showing these 4 infobars: ShowBadFlagsPrompt, GoogleApiKeysInfoBarDelegate, ObsoleteSystemInfoBarDelegate, LacrosButterBar \n- adds this infobar: ![image](https://user-images.githubusercontent.com/39191/30349667-92a7a086-97c8-11e7-86b2-1365e3d407e3.png) ... which is known to [adversely affect screenshots](https://bugs.chromium.org/p/chromium/issues/detail?id=1277272)"
+      },
+      {
+        "const": "--test-type",
+        "description": "Type of the current test harness (\"browser\" or \"ui\" or \"gpu\"). Similar to the 2014 version of `--enable-automation`"
+      },
+      {
+        "const": "--remote-debugging-pipe",
+        "description": "more secure than using protocol over a websocket"
+      },
+      {
+        "const": "--remote-debugging-port=..",
+        "description": "With a value of 0, Chrome will automatically select a useable port _and_ will set `navigator.webdriver` to `true`"
+      },
+      {
+        "const": "--silent-debugger-extension-api",
+        "description": "Does not show an infobar when a Chrome extension attaches to a page using `chrome.debugger` page. Required to attach to extension background pages"
+      },
+      {
+        "const": "--enable-logging=stderr",
+        "description": "Logging behavior slightly more appropriate for a server-type process"
+      },
+      {
+        "const": "--log-level=0",
+        "description": "0 means INFO and higher. `2` is the most verbose. Protip: Use `--enable-logging=stderr --v=2` and you may spot additional components active that you may want to disable"
+      },
+      {
+        "const": "--user-data-dir=..",
+        "description": "Directory where the browser stores the user profile"
+      },
+      {
+        "const": "--disable-features=MediaRouter",
+        "description": "Avoid the startup dialog for _Do you want the application “Chromium.app” to accept incoming network connections?_. Also disables the [Chrome Media Router](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/media/media_router.md) which creates background networking activity to discover cast targets. A superset of disabling `DialMediaRouteProvider`"
+      },
+      {
+        "const": "--password-store=basic",
+        "description": "Avoid potential instability of using Gnome Keyring or KDE wallet. [chromium/linux/password_storage.md](https://chromium.googlesource.com/chromium/src/+/main/docs/linux/password_storage.md) https://crbug.com/57100"
+      },
+      {
+        "const": "--use-mock-keychain",
+        "description": "Use mock keychain on Mac to prevent the blocking permissions dialog abou: _Chrome wants to use your confidential information stored in your keychain"
+      },
+      {
+        "const": "--disable-background-networking",
+        "description": "Disable various background network services, including extension updating,safe browsing service, upgrade detector, translate, UM"
+      },
+      {
+        "const": "--disable-breakpad",
+        "description": "Disable crashdump collection (reporting is already disabled in Chromium"
+      },
+      {
+        "const": "--disable-component-update",
+        "description": "Don't update the browser 'components' listed at chrome://components"
+      },
+      {
+        "const": "--disable-domain-reliability",
+        "description": "Disables Domain Reliability Monitoring, which tracks whether the browser has difficulty contacting Google-owned sites and uploads reports to Google"
+      },
+      {
+        "const": "--disable-features=AutofillServerCommunication",
+        "description": "Disables autofill server communication. This feature isn't disabled via other 'parent' flags"
+      },
+      { "const": "--disable-features=CertificateTransparencyComponentUpdater" },
+      { "const": "--disable-sync", "description": "Disable syncing to a Google account" },
+      {
+        "const": "--enable-crash-reporter-for-testing",
+        "description": "Used for turning on Breakpad crash reporting in a debug environment where crash reporting is typically compiled but disabled"
+      },
+      {
+        "const": "--metrics-recording-only",
+        "description": "Disable reporting to UMA, but allows for collection"
+      },
+      {
+        "const": "--disable-features=OptimizationHints",
+        "description": "Disable the [Chrome Optimization Guide](https://chromium.googlesource.com/chromium/src/+/HEAD/components/optimization_guide/) and networking with its service AP"
+      },
+      {
+        "const": "--disable-features=DialMediaRouteProvider",
+        "description": "A weaker form of disabling the `MediaRouter` feature. See that flag's details"
+      },
+      { "const": "--no-pings", "description": "Don't send hyperlink auditing ping" },
+      {
+        "const": "--allow-pre-commit-input",
+        "description": "Allows processing of input before a frame has been committed. Used by headless. https://crbug.com/98762"
+      },
+      {
+        "const": "--deterministic-mode",
+        "description": "An experimental meta flag. This sets the below indented flags which put the browser into a mode where rendering (border radius, etc) is deterministic and begin frames should be issued over DevTools Protocol. [codesearch](https://source.chromium.org/chromium/chromium/src/+/main:headless/app/headless_shell.cc;drc=df45d1abbc20abc7670643adda6d9625eea55b4d\n  - `--run-all-compositor-stages-before-draw`\n- `--disable-new-content-rendering-timeout`\n- `--enable-begin-frame-control`\n- `--disable-threaded-animation`\n- `--disable-threaded-scrolling`\n- `--disable-checker-imaging`\n- `--disable-image-animation-resync`"
+      },
+      {
+        "const": "--disable-features=PaintHolding",
+        "description": "Don't defer paint commits (normally used to avoid flash of unstyled content"
+      },
+      { "const": "--disable-partial-raster", "description": "https://crbug.com/91995" },
+      {
+        "const": "--disable-skia-runtime-opts",
+        "description": "Do not use runtime-detected high-end CPU optimizations in Skia"
+      },
+      {
+        "const": "--in-process-gpu",
+        "description": "Saves some memory by moving GPU process into a browser process threat"
+      },
+      {
+        "const": "--use-gl=\"swiftshader\"",
+        "description": "Select which implementation of GL the GPU process should use. Options are: `desktop`: whatever desktop OpenGL the user has installed (Linux and Mac default). `egl`: whatever EGL / GLES2 the user has installed (Windows default - actually ANGLE). `swiftshader`: The SwiftShader software renderer"
+      },
+      {
+        "const": "--block-new-web-contents",
+        "description": "All pop-ups and calls to window.open will fail"
+      },
+      {
+        "const": "--force-color-profile=srgb",
+        "description": "Force all monitors to be treated as though they have the specified color profile"
+      },
+      { "const": "--new-window", "description": "Launches URL in new browser window" },
+      {
+        "const": "--window-position=0,0",
+        "description": "Specify the initial window position: --window-position=x,"
+      },
+      {
+        "const": "--window-size=1600,1024",
+        "description": "Sets the initial window size. Provided as string in the format \"800,600\""
+      },
+      {
+        "const": "--disable-features=DestroyProfileOnBrowserClose",
+        "description": " Disable the feature of: Destroy profiles when their last browser window is closed, instead of when the browser exits"
+      },
+      {
+        "const": "--disable-features=site-per-process",
+        "description": "Disables OOPIF. https://www.chromium.org/Home/chromium-security/site-isolation"
+      },
+      {
+        "const": "--no-service-autorun",
+        "description": "Disables the service process from adding itself as an autorun process. This does not delete existing autorun registrations, it just prevents the service from registering a new one"
+      },
+      {
+        "const": "--process-per-tab",
+        "description": "Doesn't do anything. Use --single-process instead.\n\nSee: https://source.chromium.org/chromium/chromium/src/+/main:content/public/common/content_switches.cc;l=602-605;drc=2149a93144ce2030ab20863c2983b6c9d7bfd177"
+      },
+      {
+        "const": "--single-process",
+        "description": "Runs the renderer and plugins in the same process as the browser"
+      },
+      {
+        "const": "--headless",
+        "description": "Run in headless mode, i.e., without a UI or display server dependencies"
+      },
+      {
+        "const": "--headless=new",
+        "description": "New, native Headless mode. ([previously](https://bugs.chromium.org/p/chromium/issues/detail?id=1380881), `--headless=chrome`"
+      },
+      {
+        "const": "--no-sandbox",
+        "description": "Sometimes used with headless, though not recommended.\n\nSee: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#setting-up-chrome-linux-sandboxs"
+      },
+      {
+        "const": "--disable-dev-shm-usage",
+        "description": "Often used in Lambda, Cloud Functions scenarios. ([pptr issue](https://github.com/GoogleChrome/puppeteer/issues/1834), [crbug](https://bugs.chromium.org/p/chromium/issues/detail?id=736452)"
+      },
+      {
+        "const": "--disable-gpu",
+        "description": "Was often [used](https://bugs.chromium.org/p/chromium/issues/detail?id=737678) along with `--headless`, but as of 2021, isn't needed"
+      },
+      {
+        "const": "--disable-add-to-shelf",
+        "description": "[Removed June 2017](https://codereview.chromium.org/2944283002)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-background-downloads",
+        "description": "[Removed Oct 2014](https://codereview.chromium.org/607843002)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-browser-side-navigation",
+        "description": "Removed. It disabled PlzNavigate",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-datasaver-prompt",
+        "description": "Removed",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-desktop-notifications",
+        "description": "Removed",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-device-discovery-notifications",
+        "description": "Removed. Avoided messages like \"New printer on your network\". [Replaced](https://crbug.com/1020447#c1) with `--disable-features=MediaRouter`",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-features=TranslateUI",
+        "description": "Removed as `TranslateUI` changed to `Translate` in [Sept 2020](https://chromium-review.googlesource.com/c/chromium/src/+/2404484)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-infobars",
+        "description": "[Removed May 2019](https://chromium-review.googlesource.com/c/chromium/src/+/1599303)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-save-password-bubble",
+        "description": "[Removed May 2016](https://codereview.chromium.org/1978563002)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-search-geolocation-disclosure",
+        "description": "Removed",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-translate",
+        "description": "[Removed April 2017](https://codereview.chromium.org/2819813002/) Used to disable built-in Google Translate service",
+        "deprecated": true
+      },
+      {
+        "const": "--ignore-autoplay-restrictions",
+        "description": "[Removed December 2017](https://chromium-review.googlesource.com/#/c/816855/) Can use `--autoplay-policy=no-user-gesture-required` instead",
+        "deprecated": true
+      },
+      {
+        "const": "--safebrowsing-disable-auto-update",
+        "description": "[Removed Nov 2017](https://bugs.chromium.org/p/chromium/issues/detail?id=74848#c26)",
+        "deprecated": true
+      },
+      {
+        "const": "--ignore-certificate-errors",
+        "description": "Removed. Use \"--ignore-certificate-errors-spki-list\"",
+        "deprecated": true
+      },
+      {
+        "type": "string"
+      }
+    ],
+    "not": {
+      "enum": [
+        "--disable-add-to-shelf",
+        "--disable-background-downloads",
+        "--disable-browser-side-navigation",
+        "--disable-datasaver-prompt",
+        "--disable-desktop-notifications",
+        "--disable-device-discovery-notifications",
+        "--disable-features=TranslateUI",
+        "--disable-infobars",
+        "--disable-save-password-bubble",
+        "--disable-search-geolocation-disclosure",
+        "--disable-translate",
+        "--ignore-autoplay-restrictions",
+        "--safebrowsing-disable-auto-update",
+        "--ignore-certificate-errors"
+      ]
+    },
+    "pattern": "^--.*$"
+  },
+  "additionalItems": {
+    "type": "string"
+  }
+}
