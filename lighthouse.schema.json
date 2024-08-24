@@ -9,11 +9,7 @@
       "enum": ["json", "html", "csv"]
     },
     "chromeFlag": {
-      "type": ["string", "array"],
-      "$ref": "./chrome-flags.schema.json",
-      "additionalItems": {
-        "type": "string"
-      }
+      "$ref": "./chrome-flags.schema.json"
     },
     "port": {
       "type": "number",
@@ -675,7 +671,11 @@
               "oneOf": [
                 {
                   "description": "There are three presets available to provide a good starting point. Presets can be extended with manual assertions.\n\nlighthouse:all - Asserts that every audit received a perfect score. This is extremely difficult to do. Only use as a base on very high quality, greenfield projects and lower the thresholds as needed.\nlighthouse:recommended - Asserts that every audit outside performance received a perfect score, that no resources were flagged for performance opportunities, and warns when metric values drop below a score of 90. This is a more realistic base that disables hard failures for flaky audits.\nlighthouse:no-pwa - lighthouse:recommended but without any of the PWA audits enabled.",
-                  "enum": ["lighthouse:all", "lighthouse:recommended", "lighthouse:no-pwa"],
+                  "enum": [
+                    "lighthouse:all",
+                    "lighthouse:recommended",
+                    "lighthouse:no-pwa"
+                  ],
                   "deprecated": true
                 },
                 {

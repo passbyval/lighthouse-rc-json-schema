@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deprecated Chrome flags",
+  "description": "Inexhaustive [deprecated] Chrome flags",
+  "type": "array",
+  "items": {
+    "pattern": "^--.*$",
+    "type": "string",
+    "anyOf": [
+      {
+        "const": "--disable-add-to-shelf",
+        "description": "[Removed June 2017](https://codereview.chromium.org/2944283002)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-background-downloads",
+        "description": "[Removed Oct 2014](https://codereview.chromium.org/607843002)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-browser-side-navigation",
+        "description": "Removed. It disabled PlzNavigate",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-client-side-phishing-detection",
+        "description": "Removed. See https://issues.chromium.org/issues/41099515",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-datasaver-prompt",
+        "description": "Removed",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-desktop-notifications",
+        "description": "Removed",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-device-discovery-notifications",
+        "description": "Removed. Avoided messages like \"New printer on your network\". [Replaced](https://crbug.com/1020447#c1) with `--disable-features=MediaRouter`",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-features=TranslateUI",
+        "description": "Removed as `TranslateUI` changed to `Translate` in [Sept 2020](https://chromium-review.googlesource.com/c/chromium/src/+/2404484)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-features=AutoExpandDetailsElement",
+        "description": "Removed in [Sept 2022](https://bugs.chromium.org/p/chromium/issues/detail?id=1185950#c62)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-infobars",
+        "description": "[Removed May 2019](https://chromium-review.googlesource.com/c/chromium/src/+/1599303)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-save-password-bubble",
+        "description": "[Removed May 2016](https://codereview.chromium.org/1978563002)",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-search-geolocation-disclosure",
+        "description": "Removed",
+        "deprecated": true
+      },
+      {
+        "const": "--disable-translate",
+        "description": "[Removed April 2017](https://codereview.chromium.org/2819813002/) Used to disable built-in Google Translate service",
+        "deprecated": true
+      },
+      {
+        "const": "--ignore-autoplay-restrictions",
+        "description": "[Removed December 2017](https://chromium-review.googlesource.com/#/c/816855/) Can use `--autoplay-policy=no-user-gesture-required` instead",
+        "deprecated": true
+      },
+      {
+        "const": "--safebrowsing-disable-auto-update",
+        "description": "[Removed Nov 2017](https://bugs.chromium.org/p/chromium/issues/detail?id=74848#c26)",
+        "deprecated": true
+      },
+      {
+        "const": "--ignore-certificate-errors",
+        "description": "Removed. Use \"--ignore-certificate-errors-spki-list\"",
+        "deprecated": true
+      },
+      {
+        "const": "--alsa-fixed-output-sample-rate",
+        "description": "Optional flag to set a fixed sample rate for the alsa device. Deprecated: Use --audio-output-sample-rate instead.",
+        "deprecated": true
+      },
+      {
+        "const": "--arc-available",
+        "description": "DEPRECATED: Please use --arc-availability=installed. Signals the availability of the ARC instance on this device.",
+        "deprecated": true
+      },
+      {
+        "const": "--enable-arc",
+        "description": "DEPRECATED. Please use --arc-availability=officially-supported. Enables starting the ARC instance upon session start.",
+        "deprecated": true
+      },
+      {
+        "const": "--use-first-party-set",
+        "description": "Allows the manual specification of a First-Party Set, as a comma-separated list of origins. The first origin in the list is treated as the owner of the set. DEPRECATED(crbug.com/1486689): This switch is under deprecation due to renaming \"First-Party Set\" to \"Related Website Set\". Please use `kUseRelatedWebsiteSet` instead.",
+        "deprecated": true
+      },
+      {
+        "const": "--enable-web-auth-deprecated-mojo-testing-api",
+        "description": "Enable the WebAuthn Mojo Testing API. This is a way to interact with the virtual authenticator environment through a mojo interface and is supported only to run web-platform-tests on content shell. Removal of this deprecated API is blocked on crbug.com/937369.",
+        "deprecated": true
+      }
+    ]
+  }
+}

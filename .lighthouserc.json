@@ -1,0 +1,22 @@
+{
+  "$schema": "./lighthouse.schema.json",
+  "ci": {
+    "collect": {
+      "startServerCommand": "npm start",
+      "settings": {
+        "chromeFlags": [
+          "--headless=new",
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--test-type",
+          "--enable-automation"
+        ],
+        "preset": "desktop",
+        "disableStorageReset": true
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
