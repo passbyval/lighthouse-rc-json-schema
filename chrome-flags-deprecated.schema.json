@@ -2,7 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Deprecated Chrome flags",
   "description": "Inexhaustive [deprecated] Chrome flags",
-  "type": "array",
   "items": {
     "pattern": "^--.*$",
     "type": "string",

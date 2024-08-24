@@ -12,7 +12,6 @@
     "https://source.chromium.org/chromium/chromium/src/+/main:sandbox/policy/switches.cc?q=kXrCompositingSandbox&ss=chromium",
     "https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md"
   ],
-  "type": "array",
   "additionalItems": true,
   "items": {
     "pattern": "^--.*$",
