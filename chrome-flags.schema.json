@@ -2,16 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Common Tooling Chrome Flags",
   "description": "Inexhaustive Chrome flag used commonly for tooling.",
-  "sources": [
-    "chrome://flags",
-    "https://peter.sh/experiments/chromium-command-line-switches",
-    "https://github.com/beverloo/peter.sh/tree/master/services/services/command-line-flags",
-    "https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md",
-    "https://github.com/GoogleChrome/chrome-launcher/blob/main/src/flags.ts",
-    "https://source.chromium.org/chromium/chromium/src/+/main:third_party/crossbench/crossbench/flags/known_chrome_flags.py",
-    "https://source.chromium.org/chromium/chromium/src/+/main:sandbox/policy/switches.cc?q=kXrCompositingSandbox&ss=chromium",
-    "https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md"
-  ],
   "additionalItems": true,
   "items": {
     "pattern": "^--.*$",

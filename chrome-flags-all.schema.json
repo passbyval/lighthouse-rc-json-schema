@@ -2,10 +2,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Active Chrome Flags",
   "description": "Exhaustive Chrome flags schema",
-  "sources": [
-    "https://peter.sh/experiments/chromium-command-line-switches",
-    "https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md"
-  ],
   "items": {
     "pattern": "^--.*$",
     "type": "string",
