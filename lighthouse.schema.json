@@ -242,7 +242,110 @@
             },
             "puppeteerLaunchOptions": {
               "type": "object",
-              "description": "An object of options to pass to puppeteer's launch method. Only used when puppeterScript is set."
+              "description": "An object of options to pass to puppeteer's launch method. Only used when puppeterScript is set.",
+              "properties": {
+                "args": {
+                  "$ref": "#/$defs/chromeFlag"
+                },
+                "ignoreHTTPSErrors": {
+                  "type": "boolean",
+                  "description": "Whether to ignore HTTPS errors during navigation. Defaults to false.",
+                  "default": false
+                },
+                "headless": {
+                  "type": "boolean",
+                  "description": "Whether to run browser in headless mode. Defaults to true unless the devtools option is true.",
+                  "default": true
+                },
+                "executablePath": {
+                  "type": "string",
+                  "description": "Path to a Chromium or Chrome executable to run instead of the bundled Chromium. If executablePath is a relative path, then it is resolved relative to current working directory. BEWARE: Puppeteer is only guaranteed to work with the bundled Chromium, use at your own risk."
+                },
+                "slowMo": {
+                  "type": "number",
+                  "description": "Slows down Puppeteer operations by the specified amount of milliseconds. Useful so that you can see what is going on."
+                },
+                "defaultViewport": {
+                  "type": "object",
+                  "properties": {
+                    "width": {
+                      "type": "number",
+                      "description": "Width in pixels."
+                    },
+                    "height": {
+                      "type": "number",
+                      "description": " height in pixels."
+                    },
+                    "deviceScaleFactor": {
+                      "type": "number",
+                      "description": "Specify device scale factor (can be thought of as dpr). Defaults to 1.",
+                      "default": 1
+                    },
+                    "isMobile": {
+                      "type": "boolean",
+                      "description": "Whether the meta viewport tag is taken into account. Defaults to false.",
+                      "default": false
+                    },
+                    "hasTouch": {
+                      "type": "boolean",
+                      "description": "Specifies if viewport supports touch events. Defaults to false.",
+                      "default": false
+                    },
+                    "isLandscape": {
+                      "type": "boolean",
+                      "description": "Specifies if viewport is in landscape mode. Defaults to false.",
+                      "default": false
+                    }
+                  }
+                },
+                "ignoreDefaultArgs": {
+                  "type": ["boolean", "array", "string"],
+                  "description": " If true, then do not use puppeteer.defaultArgs(). If an array is given, then filter out the given default arguments. Dangerous option; use with care. Defaults to false."
+                },
+                "handleSIGINT": {
+                  "type": "boolean",
+                  "description": "Close the browser process on Ctrl-C. Defaults to true.",
+                  "default": true
+                },
+                "handleSIGTERM": {
+                  "type": "boolean",
+                  "description": "Close the browser process on SIGTERM. Defaults to true.",
+                  "default": true
+                },
+                "handleSIGHUP": {
+                  "type": "boolean",
+                  "description": "Close the browser process on SIGHUP. Defaults to true.",
+                  "default": true
+                },
+                "timeout": {
+                  "type": "number",
+                  "description": "Maximum time in milliseconds to wait for the browser instance to start. Defaults to 30000 (30 seconds). Pass 0 to disable timeout.",
+                  "default": 30000
+                },
+                "dumpio": {
+                  "type": "boolean",
+                  "description": "Whether to pipe the browser process stdout and stderr into process.stdout and process.stderr. Defaults to false.",
+                  "default": true
+                },
+                "userDataDir": {
+                  "type": "string",
+                  "description": "Path to a User Data Directory."
+                },
+                "env": {
+                  "type": "Object",
+                  "description": "Specify environment variables that will be visible to the browser. Defaults to \"process.env\"."
+                },
+                "devtools": {
+                  "type": "boolean",
+                  "description": "Whether to auto-open a DevTools panel for each tab. If this option is true, the headless option will be set false.",
+                  "default": true
+                },
+                "pipe": {
+                  "type": "boolean",
+                  "description": "Connects to the browser over a pipe instead of a WebSocket. Defaults to false.",
+                  "default": true
+                }
+              }
             },
             "psiApiKey": {
               "type": "string",

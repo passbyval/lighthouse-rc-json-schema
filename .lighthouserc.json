@@ -3,6 +3,10 @@
   "ci": {
     "collect": {
       "startServerCommand": "npm start",
+      "puppeteerScript": "",
+      "puppeteerLaunchOptions": {
+        "args": ["--allow-pre-commit-input"]
+      },
       "settings": {
         "chromeFlags": [
           "--headless=new",
