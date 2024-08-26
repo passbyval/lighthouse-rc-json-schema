@@ -232,6 +232,10 @@
               "default": false,
               "description": "Boolean that controls whether the static server started in staticDistDir should act like a single-page application that serves index.html instead of a 404 for unrecognized paths. This flag has no function when staticDistDir is not set."
             },
+            "preset": {
+              "enum": ["experimental", "perf", "desktop"],
+              "description": "A preset audit of selected audit categories to run."
+            },
             "chromePath": {
               "type": "string",
               "description": "The path of the Chrome executable to use for puppeteerScript and running Lighthouse. Lighthouse CI will use Chrome installations in the following priority order:\n\nchromePath option\nCHROME_PATH Environment Variable\nExecutable path returned by puppeteer or puppeteer-core, if installed.\nHighest priority installation returned by the chrome-launcher npm package."
